@@ -459,6 +459,6 @@ class NStepLookaheadPlayer(Player):
 
 width = 64
 height = 32
-snake_game = SnakeGame(NStepLookaheadPlayer(lookahead_steps=100), width, height, max_frame_rate=75)
-#snake_game = SnakeGame(HumanPlayer(), width, height, max_frame_rate=30)
+#snake_game = SnakeGame(NStepLookaheadPlayer(lookahead_steps=100), width, height, max_frame_rate=75)
+snake_game = SnakeGame(HumanPlayer(), width, height, max_frame_rate=30)
 snake_game.play_game()
