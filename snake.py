@@ -69,7 +69,7 @@ class SnakeGame(object):
 
         pixel_width = 5
         pixel_height = 3
-
+        #os.system('clear') # causes flickering.
         # This resets to home position instead of clearing
         sys.stdout.write("\033[H")
 
@@ -334,6 +334,57 @@ class HumanPlayer(object):
 class RandomPlayer(Player):
     def __init__(self):
         self.last_move = None
+
+    def next_move(self, game_state):
+        moves = [
+            (0, 1),
+            (0, -1),
+            (1, 0),
+            (-1, 0),
+        ]
+        return random.choice(moves)
+
+class TempState(object):
+    def __init__(self, level, original_move, gamestate_hypo):
+        self.level = level
+        self.original_move = original_move
+        self.gamestate_hypo = gamestate_hypo
+
+    def __lt__(self, _):
+        return True
+
+class NStepLookaheadPlayer(Player):
+    def __init__(self, lookahead_steps=1):
+        self.lookahead_steps = lookahead_steps
+
+    def tail_reachable(self, game_state):
+        moves = [
+            (0, 1),
+            (0, -1),
+            (1, 0),
+            (-1, 0),
+        ]
+        start_pos = game_state.snake.head.pos
+        food = game_state.food_pos
+
+        queue = deque([start_pos])
+        visited = set([])
+
+        while queue:
+            i, j = queue.popleft()
+            if not game_state.is_valid_position((i, j)):
+                continue
+
+            if (i, j) in visited:
+                continue
+
+            visited.add((i,j))
+            if (i, j) == food:
+                return True
+
+            for m in moves:
+                queue.append((i + m[0], j + m[1]))
+        return False
 
     def next_move(self, game_state):
         moves = [
